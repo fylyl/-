@@ -26,8 +26,7 @@ Fusion3
 代码：
 cat test |\
 awk '/Fusion/{ print from; print $0; save="true" }
-/From/{ if (NR==1) {from=$0}
-       else {if (save=="true") {from=$0; save=False}} }'
+/From/{ if (NR==1) {from=$0} else {if (save=="true") {from=$0; save=False}} }'
 
 改进：
 cat test |\
