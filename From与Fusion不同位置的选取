@@ -1,0 +1,72 @@
+test 文件内容如下
+From1
+Fusion1
+From21
+From22
+From23
+Fusion2
+From31
+From32
+Fusion3
+
+问题1：提取最后一个From与相邻Fusion的组合
+代码：
+cat test |\
+awk '/Fusion/{print from; print $0} /From/{from=$0}'
+
+结果：
+From1
+Fusion1
+From23
+Fusion2
+From32
+Fusion3
+
+问题2：提取最前一个From与相邻Fusion的组合
+代码：
+cat test |\
+awk '/Fusion/{ print from; print $0; save="true" }
+/From/{ if (NR==1) {from=$0}
+       else {if (save=="true") {from=$0; save=False}} }'
+
+改进：
+cat test |\
+awk 'BEGIN{ save="true" }
+/Fusion/{ print from; print $0; save="true"} 
+/From/{ if (save=="true") {from=$0; save=False} }'
+
+结果：
+From1
+Fusion1
+From21
+Fusion2
+From31
+Fusion3
+
+问题3：提取第2个From与相邻Fusion的组合
+代码：
+cat test |\
+awk 'BEGIN{ count=0 }
+/Fusion/{ if (count==2) {print from; print $0; count=0} else {count=0} }
+/From/{ if (count<1) {count++} else if (count==1) {from=$0; count++} }'
+
+结果：
+From22
+Fusion2
+From32
+Fusion3
+
+问题4：提取第3个From与相邻Fusion的组合
+代码：
+cat test |\
+awk 'BEGIN{ count=0 }
+/Fusion/{ if (count==3) {print from; print $0; count=0} else {count=0} }
+/From/{ if (count<2) {count++} else if (count==2) {from=$0; count++} }'
+
+结果：
+From23
+Fusion2
+
+
+
+
